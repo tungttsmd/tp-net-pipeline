@@ -12,13 +12,20 @@ set BASE_URL=https://github.com/tungttsmd
 set RELEASE_REPO=tp-net-node-release
 set TARGET_REPO=%BASE_URL%/%RELEASE_REPO%
 
+:: Check git: using portable first, fallback into system git
+if exist "%~dp0pipeline-environment\git\cmd\git.exe" (
+    set GIT=%~dp0pipeline-environment\git\cmd\git.exe
+) else (
+    set GIT=git
+)
+
 REM ===== Clone source repos =====
-git clone --branch %BRANCH% --single-branch %BASE_URL%/tp-net-node-cloudflared-service
-git clone --branch %BRANCH% --single-branch %BASE_URL%/tp-net-librehwmonitor
-git clone --branch %BRANCH% --single-branch %BASE_URL%/tp-net-trigger
+%GIT% clone --branch %BRANCH% --single-branch %BASE_URL%/tp-net-node-cloudflared-service
+%GIT% clone --branch %BRANCH% --single-branch %BASE_URL%/tp-net-librehwmonitor
+%GIT% clone --branch %BRANCH% --single-branch %BASE_URL%/tp-net-trigger
 
 REM ===== Clone release repo =====
-git clone --branch %BRANCH% --single-branch %TARGET_REPO%
+%GIT% clone --branch %BRANCH% --single-branch %TARGET_REPO%
 
 echo.
 echo ================================
@@ -87,9 +94,9 @@ echo Git Commit ^& Push
 echo ================================
 echo.
 
-git add .
-git commit -m "tp-net-node-release-0.0.1"
-git push origin %BRANCH%:%BRANCH%
+%GIT% add .
+%GIT% commit -m "tp-net-node-release-0.0.1"
+%GIT% push origin %BRANCH%:%BRANCH%
 
 echo.
 echo ================================
